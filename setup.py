@@ -3,8 +3,8 @@ from setuptools import Extension, setup
 setup(
     ext_modules=[
         Extension(
-            name="oRatio",
-            sources=["main.cpp"],
+            name="oRatioNative",
+            sources=["src/py_solver.cpp"],
             include_dirs=['/usr/local/include/json',
                           '/usr/local/include/SeMiTONE',
                           '/usr/local/include/RiDDLe',
@@ -18,6 +18,8 @@ setup(
                        'oRatio',
                        'PlExA'],
             library_dirs=['/usr/local/lib']
-        ),
-    ]
+        )
+    ],
+    packages=['oRatio'],
+    package_dir={"oRatio": "src/oRatio"}
 )

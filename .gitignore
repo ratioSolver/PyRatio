@@ -1,3 +1,4 @@
 .vscode
 dist
 oRatio.egg-info
+__pycache__
