@@ -21,7 +21,11 @@ setup(
                        'PlExA'],
             library_dirs=['/usr/local/lib'],
             define_macros=[
-                ("BUILD_LISTENERS", "1")
+                ("BUILD_LISTENERS", "1"),
+                ("TEMPORAL_NETWORK_TYPE", "LA"),
+                ("HEURISTIC_TYPES", "h_max"),
+                ("DEFERRABLE_FLAWS", "1"),
+                ("GRAPH_PRUNING", "1")
             ]
         )
     ],

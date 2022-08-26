@@ -26,9 +26,10 @@ extern "C"
         PyObject *py_s;
         if (!PyArg_ParseTuple(args, "O", &py_s))
             return NULL;
-
         delete reinterpret_cast<ratio::python::py_core_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"))));
+        PyObject_DelAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"));
         delete reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("native_handler"))));
+        PyObject_DelAttr(py_s, PyUnicode_InternFromString("native_handler"));
         return PyBool_FromLong(1);
     }
 
