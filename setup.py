@@ -5,7 +5,8 @@ setup(
         Extension(
             name="oRatioNative",
             sources=['src/py_solver.cpp',
-                     'src/py_core_listener.cpp'],
+                     'src/py_core_listener.cpp',
+                     'src/py_solver_listener.cpp'],
             include_dirs=['include',
                           '/usr/local/include/json',
                           '/usr/local/include/SeMiTONE',
