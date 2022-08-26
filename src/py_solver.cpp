@@ -1,4 +1,7 @@
 #include "solver.h"
+#include "py_core_listener.h"
+#include "solver.h"
+#include "item.h"
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #ifdef __cplusplus
@@ -13,14 +16,19 @@ extern "C"
 
         auto *s = new ratio::solver::solver();
         PyObject_SetAttr(py_s, PyUnicode_InternFromString("native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(s)));
+        auto *cl = new ratio::python::py_core_listener(*s);
+        PyObject_SetAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(cl)));
         return PyLong_FromLong(reinterpret_cast<uintptr_t>(s));
     }
 
     static PyObject *delete_solver_instance(PyObject *self, PyObject *args)
     {
-        long c_slv = PyLong_AsLong(PyObject_GetAttr(self, PyUnicode_InternFromString("native_handler")));
-        ratio::solver::solver *slv = reinterpret_cast<ratio::solver::solver *>(c_slv);
-        delete slv;
+        PyObject *py_s;
+        if (!PyArg_ParseTuple(args, "O", &py_s))
+            return NULL;
+
+        delete reinterpret_cast<ratio::python::py_core_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"))));
+        delete reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("native_handler"))));
         return PyBool_FromLong(1);
     }
 
