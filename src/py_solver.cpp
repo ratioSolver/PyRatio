@@ -15,13 +15,13 @@ extern "C"
             return NULL;
 
         auto s = new ratio::solver::solver();
-        PyObject_SetAttr(py_s, PyUnicode_InternFromString("native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(s)));
+        PyObject_SetAttr(py_s, PyUnicode_InternFromString("_native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(s)));
 
         auto cl = new ratio::python::py_core_listener(*s, py_s);
-        PyObject_SetAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(cl)));
+        PyObject_SetAttr(py_s, PyUnicode_InternFromString("_core_listener_native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(cl)));
 
         auto sl = new ratio::python::py_solver_listener(*s, py_s);
-        PyObject_SetAttr(py_s, PyUnicode_InternFromString("solver_listener_native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(sl)));
+        PyObject_SetAttr(py_s, PyUnicode_InternFromString("_solver_listener_native_handler"), PyLong_FromLong(reinterpret_cast<uintptr_t>(sl)));
 
         return PyLong_FromLong(reinterpret_cast<uintptr_t>(s));
     }
@@ -32,14 +32,14 @@ extern "C"
         if (!PyArg_ParseTuple(args, "O", &py_s))
             return NULL;
 
-        delete reinterpret_cast<ratio::python::py_solver_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("solver_listener_native_handler"))));
-        PyObject_DelAttr(py_s, PyUnicode_InternFromString("solver_listener_native_handler"));
+        delete reinterpret_cast<ratio::python::py_solver_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("_solver_listener_native_handler"))));
+        PyObject_DelAttr(py_s, PyUnicode_InternFromString("_solver_listener_native_handler"));
 
-        delete reinterpret_cast<ratio::python::py_core_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"))));
-        PyObject_DelAttr(py_s, PyUnicode_InternFromString("core_listener_native_handler"));
+        delete reinterpret_cast<ratio::python::py_core_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("_core_listener_native_handler"))));
+        PyObject_DelAttr(py_s, PyUnicode_InternFromString("_core_listener_native_handler"));
 
-        delete reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("native_handler"))));
-        PyObject_DelAttr(py_s, PyUnicode_InternFromString("native_handler"));
+        delete reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString("_native_handler"))));
+        PyObject_DelAttr(py_s, PyUnicode_InternFromString("_native_handler"));
 
         return PyBool_FromLong(1);
     }
