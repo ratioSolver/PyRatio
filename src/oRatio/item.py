@@ -21,10 +21,12 @@ class EnumItem(Item):
 
 class ComplexItem(Item):
 
-    def __init__(self, type: Type):
-        super(ComplexItem, self).__init__(type)
+    def __init__(self, env, type: Type):
+        self.env = env
+        self.type = type
+        self.exprs = dict[str, Item]
 
 
 class Atom(ComplexItem):
-    def __init__(self, type: Type):
-        super(Atom, self).__init__(type)
+    def __init__(self, env, type: Type):
+        super(Atom, self).__init__(env, type)

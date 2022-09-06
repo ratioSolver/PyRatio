@@ -1,14 +1,16 @@
 from oRatioNative import new_instance, delete_instance, read_riddle, solve_problem
 from typing import Sequence
-from oRatio.scope import Scope
-from oRatio.env import Env
+from oRatio.item import *
+from oRatio.type import *
 
 
-class Solver(Scope, Env):
+class Solver:
 
     def __init__(self):
-        super(Solver, self).__init__(None)
         new_instance(self)
+        self.fields = dict[str, Field]
+        self.methods = dict[str, Sequence[Method]]
+        self.exprs = dict[str, Item]
 
     def dispose(self):
         delete_instance(self)
