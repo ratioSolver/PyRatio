@@ -1,4 +1,4 @@
-from oRatio import Type
+from oRatio.type import Type
 
 
 class Field:
