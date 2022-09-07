@@ -8,6 +8,6 @@ class Method:
         self.name = name
         self.pars = parameters
         self.return_type = return_type
-        self.fields = dict[str, Field]
+        self.fields: dict[str, Field] = {}
         for par in parameters:
             self.fields[par.name] = par

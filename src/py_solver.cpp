@@ -1,123 +1,79 @@
 #include "solver.h"
 #include "py_core_listener.h"
 #include "py_solver_listener.h"
-#include "item.h"
-#define PY_SSIZE_T_CLEAN
-#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
-#define NATIVE_HANDLER "_native_handler"
-#define CORE_LISTENER_NATIVE_HANDLER "_core_listener_native_handler"
-#define SOLVER_LISTENER_NATIVE_HANDLER "_solver_listener_native_handler"
+#define NATIVE_HANDLER "__native_handler"
+#define CORE_LISTENER_NATIVE_HANDLER "__core_listener_native_handler"
+#define SOLVER_LISTENER_NATIVE_HANDLER "__solver_listener_native_handler"
 
-static PyObject *new_solver_instance(PyObject *self, PyObject *args)
+static ratio::solver::solver *get_solver(const pybind11::object &py_slv) { return reinterpret_cast<ratio::solver::solver *>(py_slv.attr(NATIVE_HANDLER).cast<uintptr_t>()); }
+
+void new_instance(pybind11::object &py_slv)
 {
-    PyObject *py_s;
-    if (!PyArg_ParseTuple(args, "O", &py_s))
-        return NULL;
-
     auto s = new ratio::solver::solver();
-    PyObject_SetAttr(py_s, PyUnicode_InternFromString(NATIVE_HANDLER), PyLong_FromLong(reinterpret_cast<uintptr_t>(s)));
+    py_slv.attr(NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(s);
 
-    auto cl = new ratio::python::py_core_listener(*s, py_s);
-    PyObject_SetAttr(py_s, PyUnicode_InternFromString(CORE_LISTENER_NATIVE_HANDLER), PyLong_FromLong(reinterpret_cast<uintptr_t>(cl)));
+    auto cl = new ratio::python::py_core_listener(*s, py_slv);
+    py_slv.attr(CORE_LISTENER_NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(cl);
 
-    auto sl = new ratio::python::py_solver_listener(*s, py_s);
-    PyObject_SetAttr(py_s, PyUnicode_InternFromString(SOLVER_LISTENER_NATIVE_HANDLER), PyLong_FromLong(reinterpret_cast<uintptr_t>(sl)));
-
-    return PyLong_FromLong(reinterpret_cast<uintptr_t>(s));
+    auto sl = new ratio::python::py_solver_listener(*s, py_slv);
+    py_slv.attr(SOLVER_LISTENER_NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(sl);
 }
-
-static PyObject *delete_solver_instance(PyObject *self, PyObject *args)
+void delete_instance(pybind11::object &py_slv)
 {
-    PyObject *py_s;
-    if (!PyArg_ParseTuple(args, "O", &py_s))
-        return NULL;
-
-    delete reinterpret_cast<ratio::python::py_solver_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString(SOLVER_LISTENER_NATIVE_HANDLER))));
-    PyObject_DelAttr(py_s, PyUnicode_InternFromString(SOLVER_LISTENER_NATIVE_HANDLER));
-
-    delete reinterpret_cast<ratio::python::py_core_listener *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString(CORE_LISTENER_NATIVE_HANDLER))));
-    PyObject_DelAttr(py_s, PyUnicode_InternFromString(CORE_LISTENER_NATIVE_HANDLER));
-
-    delete reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString(NATIVE_HANDLER))));
-    PyObject_DelAttr(py_s, PyUnicode_InternFromString(NATIVE_HANDLER));
-
-    return PyBool_FromLong(true);
+    delete reinterpret_cast<ratio::python::py_solver_listener *>(py_slv.attr(SOLVER_LISTENER_NATIVE_HANDLER).cast<uintptr_t>());
+    delete reinterpret_cast<ratio::python::py_core_listener *>(py_slv.attr(CORE_LISTENER_NATIVE_HANDLER).cast<uintptr_t>());
+    delete get_solver(py_slv);
 }
-
-static PyObject *read_riddle(PyObject *self, PyObject *args)
+pybind11::bool_ read_script(pybind11::object &py_slv, const pybind11::str &riddle)
 {
-    PyObject *py_s;
-    PyObject *py_args;
-    if (!PyArg_ParseTuple(args, "OO", &py_s, &py_args))
-        return NULL;
-
-    auto s = reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString(NATIVE_HANDLER))));
-
-    if (PyList_Check(py_args))
-    {
-        std::cout << "a list..\n";
-        PyObject *iter = PyObject_GetIter(py_args);
-        if (!iter)
-            return NULL;
-
-        std::vector<std::string> c_files;
-        while (true)
-        {
-            PyObject *next = PyIter_Next(iter);
-            if (next)
-                c_files.push_back(PyBytes_AsString(PyUnicode_AsEncodedString(next, "utf-8", "~E~")));
-            else
-                break;
-        }
-
-        try
-        {
-            s->read(c_files);
-        }
-        catch (const std::exception &e)
-        {
-            return PyBool_FromLong(false);
-        }
-    }
-    else
-        try
-        {
-            s->read(PyBytes_AsString(PyUnicode_AsEncodedString(py_args, "utf-8", "~E~")));
-        }
-        catch (const std::exception &e)
-        {
-            return PyBool_FromLong(false);
-        }
-    return PyBool_FromLong(true);
-}
-
-static PyObject *solve_problem(PyObject *self, PyObject *args)
-{
-    PyObject *py_s;
-    if (!PyArg_ParseTuple(args, "O", &py_s))
-        return NULL;
-
-    auto s = reinterpret_cast<ratio::solver::solver *>(PyLong_AsLong(PyObject_GetAttr(py_s, PyUnicode_InternFromString(NATIVE_HANDLER))));
-
     try
     {
-        s->solve();
+        get_solver(py_slv)->read(riddle.cast<std::string>());
+        return true;
     }
     catch (const std::exception &e)
     {
-        return PyBool_FromLong(false);
+        return false;
     }
-    return PyBool_FromLong(true);
+}
+pybind11::bool_ read_files(pybind11::object &py_slv, const std::vector<pybind11::str> &files)
+{
+    std::vector<std::string> c_files;
+    for (const auto &file : files)
+        c_files.push_back(file.cast<std::string>());
+    try
+    {
+        get_solver(py_slv)->read(c_files);
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        return false;
+    }
+}
+pybind11::bool_ solve_problem(pybind11::object &py_slv)
+{
+    try
+    {
+        get_solver(py_slv)->solve();
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        return false;
+    }
 }
 
-static PyMethodDef oRatioMethods[] = {
-    {"new_instance", new_solver_instance, METH_VARARGS, "Creates a new solver instance."},
-    {"delete_instance", delete_solver_instance, METH_VARARGS, "Deletes an existing solver instance."},
-    {"read_riddle", read_riddle, METH_VARARGS, "Reads a RiDDLe script or a list of RiDDLe files."},
-    {"solve_problem", solve_problem, METH_VARARGS, "Solves the given problem."},
-    {NULL, NULL, 0, NULL}};
+PYBIND11_MODULE(oRatioNative, m)
+{
+    m.doc() = "Python API for the oRatio solver";
 
-static struct PyModuleDef oRatioModule = {PyModuleDef_HEAD_INIT, "oRatioNative", NULL, -1, oRatioMethods};
-
-PyMODINIT_FUNC PyInit_oRatioNative(void) { return PyModule_Create(&oRatioModule); }
+    m.def("new_instance", &new_instance, "Creates a new solver instance");
+    m.def("delete_instance", &delete_instance, "Deletes an existing solver instance");
+    m.def("read_script", &read_script, "Reads a RiDDLe script");
+    m.def("read_files", &read_files, "Reads a list of RiDDLe files");
+    m.def("solve_problem", &solve_problem, "Solves the given problem");
+}

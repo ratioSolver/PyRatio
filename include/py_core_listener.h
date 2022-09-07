@@ -1,13 +1,13 @@
 #pragma once
 #include "core_listener.h"
-#include <Python.h>
+#include <pybind11/pybind11.h>
 
 namespace ratio::python
 {
   class py_core_listener : public ratio::core::core_listener
   {
   public:
-    py_core_listener(ratio::core::core &cr, PyObject *py_slv);
+    py_core_listener(ratio::core::core &cr, pybind11::object &py_slv);
     ~py_core_listener();
 
   private:
@@ -22,7 +22,7 @@ namespace ratio::python
     void inconsistent_problem() override;
 
   private:
-    PyObject *py_slv;
+    pybind11::object py_slv;
     std::unordered_map<const ratio::core::type *, PyObject *> all_types;
     std::unordered_map<const ratio::core::item *, PyObject *> all_items;
   };

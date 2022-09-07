@@ -16,29 +16,30 @@ class Bound:
 
 
 class SolverListener:
-    def flawCreated(self, id: int, causes: Sequence[int], label: str, state: State, position: Bound) -> None:
+
+    def flaw_created(self, id: int, causes: Sequence[int], label: str, state: State, position: Bound) -> None:
         pass
 
-    def flawStateChanged(self, id: int, state: State) -> None:
+    def flaw_state_changed(self, id: int, state: State) -> None:
         pass
 
-    def flawCostChanged(self, id: int, cost: Fraction) -> None:
+    def flaw_cost_changed(self, id: int, cost: Fraction) -> None:
         pass
 
-    def flawPositionChanged(self, id: int, position: Bound) -> None:
+    def flaw_position_changed(self, id: int, position: Bound) -> None:
         pass
 
-    def currentFlaw(self, id: int) -> None:
+    def current_flaw(self, id: int) -> None:
         pass
 
-    def resolverCreated(self, id: int, effect: int, cost: Fraction, label: str, state: State) -> None:
+    def resolver_created(self, id: int, effect: int, cost: Fraction, label: str, state: State) -> None:
         pass
 
-    def resolverStateChanged(self, id: int, state: State) -> None:
+    def resolver_state_changed(self, id: int, state: State) -> None:
         pass
 
-    def currentResolver(self, id: int) -> None:
+    def current_resolver(self, id: int) -> None:
         pass
 
-    def causalLinkAdded(self, flaw: int, resolver: int) -> None:
+    def causal_link_added(self, flaw: int, resolver: int) -> None:
         pass

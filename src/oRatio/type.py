@@ -9,10 +9,10 @@ class Type:
     def __init__(self, name: str, primitive: bool = False):
         self.name = name
         self.primitive = primitive
-        self.constructors = list[Constructor]
-        self.fields = dict[str, Field]
-        self.methods = dict[str, Sequence[Method]]
-        self.supertypes = list[Type]
+        self.constructors: list[Constructor] = []
+        self.fields: dict[str, Field] = {}
+        self.methods: dict[str, Sequence[Method]] = {}
+        self.supertypes: list[Type] = []
 
 
 class Predicate(Type):
