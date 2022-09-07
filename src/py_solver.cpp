@@ -12,7 +12,7 @@ static ratio::solver::solver *get_solver(const pybind11::object &py_slv) { retur
 
 void new_instance(pybind11::object &py_slv)
 {
-    auto s = new ratio::solver::solver();
+    auto s = new ratio::solver::solver(false);
     py_slv.attr(NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(s);
 
     auto cl = new ratio::python::py_core_listener(*s, py_slv);
@@ -20,6 +20,8 @@ void new_instance(pybind11::object &py_slv)
 
     auto sl = new ratio::python::py_solver_listener(*s, py_slv);
     py_slv.attr(SOLVER_LISTENER_NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(sl);
+
+    s->init();
 }
 void delete_instance(pybind11::object &py_slv)
 {

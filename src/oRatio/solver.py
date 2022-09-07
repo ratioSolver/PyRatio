@@ -9,12 +9,12 @@ from oRatio.solver_listener import SolverListener
 class Solver:
 
     def __init__(self):
-        new_instance(self)
         self.fields: dict[str, Field] = {}
         self.methods: dict[str, list[Method]] = {}
         self.exprs: dict[str, Item] = {}
         self.core_listeners: list[CoreListener] = []
         self.solver_listeners: list[SolverListener] = []
+        new_instance(self)
 
     def dispose(self):
         delete_instance(self)

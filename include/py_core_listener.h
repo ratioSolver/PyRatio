@@ -21,9 +21,11 @@ namespace ratio::python
     void solution_found() override;
     void inconsistent_problem() override;
 
+    void new_type(const ratio::core::type &t);
+
   private:
     pybind11::object py_slv;
-    std::unordered_map<const ratio::core::type *, PyObject *> all_types;
-    std::unordered_map<const ratio::core::item *, PyObject *> all_items;
+    std::unordered_map<const ratio::core::type *, pybind11::object> all_types;
+    std::unordered_map<const ratio::core::item *, pybind11::object> all_items;
   };
 } // namespace ratio::python
