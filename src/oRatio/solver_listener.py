@@ -1,6 +1,6 @@
 from enum import Enum
 from typing import Sequence
-from fractions import Fraction
+from oRatio.rational import Rational
 
 
 class State(Enum):
@@ -23,7 +23,7 @@ class SolverListener:
     def flaw_state_changed(self, id: int, state: State) -> None:
         pass
 
-    def flaw_cost_changed(self, id: int, cost: Fraction) -> None:
+    def flaw_cost_changed(self, id: int, cost: Rational) -> None:
         pass
 
     def flaw_position_changed(self, id: int, position: Bound) -> None:
@@ -32,7 +32,7 @@ class SolverListener:
     def current_flaw(self, id: int) -> None:
         pass
 
-    def resolver_created(self, id: int, effect: int, cost: Fraction, label: str, state: State) -> None:
+    def resolver_created(self, id: int, effect: int, cost: Rational, label: str, state: State) -> None:
         pass
 
     def resolver_state_changed(self, id: int, state: State) -> None:

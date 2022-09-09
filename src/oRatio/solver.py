@@ -3,7 +3,7 @@ from typing import Sequence
 from oRatio.type import *
 from oRatio.item import *
 from oRatio.core_listener import CoreListener
-from oRatio.solver_listener import SolverListener
+from oRatio.solver_listener import SolverListener, Rational, Bound
 
 
 class Solver:
@@ -52,6 +52,42 @@ class Solver:
     def fire_inconsistent_problem(self) -> None:
         for l in self.core_listeners:
             l.inconsistent_problem()
+
+    def fire_flaw_created(self, id: int, causes: Sequence[int], label: str, state: State, position: Bound) -> None:
+        for l in self.solver_listeners:
+            l.flaw_created(id, causes, label, state, position)
+
+    def fire_flaw_state_changed(self, id: int, state: State) -> None:
+        for l in self.solver_listeners:
+            l.flaw_state_changed(id, state)
+
+    def fire_flaw_cost_changed(self, id: int, cost: Rational) -> None:
+        for l in self.solver_listeners:
+            l.flaw_cost_changed(id, cost)
+
+    def fire_flaw_position_changed(self, id: int, position: Bound) -> None:
+        for l in self.solver_listeners:
+            l.flaw_position_changed(id, position)
+
+    def fire_current_flaw(self, id: int) -> None:
+        for l in self.solver_listeners:
+            l.current_flaw(id)
+
+    def fire_resolver_created(self, id: int, effect: int, cost: Rational, label: str, state: State) -> None:
+        for l in self.solver_listeners:
+            l.resolver_created(id, effect, cost, label, state)
+
+    def fire_resolver_state_changed(self, id: int, state: State) -> None:
+        for l in self.solver_listeners:
+            l.resolver_state_changed(id, state)
+
+    def fire_current_resolver(self, id: int) -> None:
+        for l in self.solver_listeners:
+            l.current_resolver(id)
+
+    def fire_causal_link_added(self, flaw: int, resolver: int) -> None:
+        for l in self.solver_listeners:
+            l.causal_link_added(flaw, resolver)
 
     def add_core_listener(self, listener: CoreListener) -> None:
         self.core_listeners.append(listener)
