@@ -22,6 +22,15 @@ namespace ratio::python
     void inconsistent_problem() override;
 
     void new_type(const ratio::core::type &t);
+    void revise_type(const ratio::core::type &t);
+
+    void new_predicate(const ratio::core::predicate &p);
+    void revise_predicate(const ratio::core::predicate &p);
+
+    void new_item(const ratio::core::item &itm);
+    void new_atom(const ratio::core::atom &atm);
+
+    void set(pybind11::object &c_obj, const std::string &name, const ratio::core::item &itm);
 
   private:
     pybind11::object py_slv;

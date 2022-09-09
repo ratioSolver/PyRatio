@@ -22,6 +22,7 @@ ext_modules = [
         library_dirs=['/usr/local/lib'],
         define_macros=[
             ('BUILD_LISTENERS', '1'),
+            ('COMPUTE_NAMES', '1'),
             ('TEMPORAL_NETWORK_TYPE', 'LA'),
             ('HEURISTIC_TYPES', 'h_max'),
             ('DEFERRABLE_FLAWS', '1'),

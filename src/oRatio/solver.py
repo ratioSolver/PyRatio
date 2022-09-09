@@ -11,6 +11,7 @@ class Solver:
     def __init__(self):
         self.fields: dict[str, Field] = {}
         self.methods: dict[str, list[Method]] = {}
+        self.types: dict[str, Type] = {}
         self.exprs: dict[str, Item] = {}
         self.core_listeners: list[CoreListener] = []
         self.solver_listeners: list[SolverListener] = []
