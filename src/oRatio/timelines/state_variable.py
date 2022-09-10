@@ -1,4 +1,4 @@
-from oRatio.item import Atom
+from oRatio.item import Atom, ComplexItem
 from oRatio.timeline import *
 
 
@@ -17,42 +17,15 @@ class StateVariable(Timeline[SVValue]):
 
 class StateVariableExtractor(TimelineExtractor):
 
-    def extract(self, itm: Item, atoms: set[Atom]) -> StateVariable:
+    def extract(self, itm: ComplexItem, json_tl) -> StateVariable:
         sv = StateVariable(
             itm.name, itm.solver.exprs["origin"].val, itm.solver.exprs["horizon"].val)
-        starting_values: dict[InfRational, list[Atom]] = {}
-        ending_values: dict[InfRational, list[Atom]] = {}
-        pulses: set[InfRational] = []
 
-        for atm in atoms:
-            start = atm.exprs["start"].val
-            end = atm.exprs["end"].val
-            pulses.add(start)
-            pulses.add(end)
-            if start not in starting_values:
-                starting_values[start] = []
-            starting_values[start].append(atm)
-            if end not in ending_values:
-                ending_values[end] = []
-            ending_values[end].append(atm)
-
-        sorted_pulses = sorted(pulses)
-        overlapping_atoms: list[Atom] = []
-
-        if sorted_pulses[0] in starting_values:
-            overlapping_atoms.extend(starting_values[sorted_pulses[0]])
-        if sorted_pulses[0] in ending_values:
-            for atm in ending_values[sorted_pulses[0]]:
-                overlapping_atoms.remove(atm)
-
-        i = 1
-        while i < len(sorted_pulses):
+        for val in json_tl['values']:
+            atoms: list[Atom] = []
+            for atm_id in val.atoms:
+                atoms.append(itm.solver.atoms[str(atm_id)])
             sv.values.append(
-                SVValue(sorted_pulses[i-1], sorted_pulses[i], overlapping_atoms.copy()))
-            if sorted_pulses[i] in starting_values:
-                overlapping_atoms.extend(starting_values[sorted_pulses[i]])
-            if sorted_pulses[i] in ending_values:
-                for atm in ending_values[sorted_pulses[i]]:
-                    overlapping_atoms.remove(atm)
+                SVValue(inf_rational_from_json(val['from']), inf_rational_from_json(val['to']), inf_rational_from_json(val['usage']), atoms))
 
         return sv

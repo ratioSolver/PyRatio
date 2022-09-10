@@ -68,6 +68,7 @@ pybind11::bool_ solve_problem(pybind11::object &py_slv)
         return false;
     }
 }
+pybind11::str extract_timelines(pybind11::object &py_slv) { return to_timelines(*get_solver(py_slv)).dump(); }
 
 PYBIND11_MODULE(oRatioSolverNative, m)
 {
@@ -78,4 +79,5 @@ PYBIND11_MODULE(oRatioSolverNative, m)
     m.def("read_script", &read_script, "Reads a RiDDLe script");
     m.def("read_files", &read_files, "Reads a list of RiDDLe files");
     m.def("solve_problem", &solve_problem, "Solves the given problem");
+    m.def("extract_solver_timelines", &extract_timelines, "Extracts the timelines from the given solver");
 }

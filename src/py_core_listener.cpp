@@ -204,6 +204,7 @@ namespace ratio::python
         all_items.emplace(&itm, c_item);
 
         c_type.attr("add_instance")(c_item);
+        py_slv.attr("items")[std::to_string(get_id(itm)).c_str()] = c_item;
     }
 
     void py_core_listener::new_atom(const ratio::core::atom &atm)

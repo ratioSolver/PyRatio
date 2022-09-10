@@ -1,6 +1,6 @@
-from oRatioSolverNative import new_instance, delete_instance, read_script, read_files, solve_problem
+from oRatioSolverNative import new_instance, delete_instance, read_script, read_files, solve_problem, extract_solver_timelines
 from typing import Sequence
-import oRatio
+import json
 from oRatio.timeline import Timeline, TimelineExtractor
 from oRatio.type import *
 from oRatio.item import *
@@ -9,6 +9,7 @@ from oRatio.solver_listener import SolverListener, Rational, Bound
 from oRatio.timelines.agent import AgentExtractor
 from oRatio.timelines.state_variable import StateVariableExtractor
 from oRatio.timelines.reusable_resource import ReusableResourceExtractor
+from oRatio.timelines.consumbale_resource import ConsumableResourceExtractor
 
 
 class Solver:
@@ -21,6 +22,7 @@ class Solver:
         self.types: dict[str, Type] = {}
         self.predicates: dict[str, Predicate] = {}
         self.exprs: dict[str, Item] = {}
+        self.items: dict[str, Atom] = {}
         self.atoms: dict[str, Atom] = {}
         self.core_listeners: list[CoreListener] = []
         self.solver_listeners: list[SolverListener] = []
@@ -34,6 +36,8 @@ class Solver:
                                   ] = StateVariableExtractor()
         self.timelines_extractors[self.types["ReusableResource"]
                                   ] = ReusableResourceExtractor()
+        self.timelines_extractors[self.types["ConsumableResource"]
+                                  ] = ConsumableResourceExtractor()
 
     def dispose(self):
         delete_instance(self)
@@ -48,25 +52,14 @@ class Solver:
         return solve_problem(self)
 
     def extract_timelines(self) -> list[Timeline]:
+        j_tls = json.loads(extract_solver_timelines(self))
+
         timelines: list[Timeline] = []
-        tls_atms: dict[Item, list[Atom]] = {}
-
-        for atm in self.atoms.values():
-            tau = atm.exprs.get('tau')
-            if isinstance(tau, EnumItem):
-                for itm in tau.vals:
-                    if itm not in tls_atms:
-                        tls_atms[itm] = []
-                    tls_atms[itm].append(atm)
-            elif tau:
-                if tau not in tls_atms:
-                    tls_atms[tau] = []
-                tls_atms[tau].append(atm)
-
-        for itm, atms in tls_atms.items():
-            extractor = self.timelines_extractors[itm.type]
+        for j_tl in j_tls:
+            extractor = self.timelines_extractors[j_tl['type']]
             if extractor:
-                timelines.append(extractor.extract(itm, atms))
+                timelines.append(extractor.extract(
+                    self.items[j_tl['id']], j_tl))
 
         return timelines
 

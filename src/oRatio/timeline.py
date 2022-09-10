@@ -1,5 +1,4 @@
-from oRatio.item import Atom, EnumItem, Item
-from oRatio.type import Type
+from oRatio.item import ComplexItem
 from oRatio.rational import *
 from typing import TypeVar, SupportsAbs, Generic
 
@@ -25,5 +24,5 @@ class Timeline(Generic[T]):
 
 class TimelineExtractor:
 
-    def extract(self, itm: Item, atoms: set[Atom]) -> Timeline:
+    def extract(self, itm: ComplexItem, json_tl) -> Timeline:
         pass

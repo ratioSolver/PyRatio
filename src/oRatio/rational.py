@@ -39,7 +39,7 @@ class Rational:
 
 class InfRational:
 
-    def __init__(self, rat: int, inf: int):
+    def __init__(self, rat: Rational, inf: Rational = Rational(0)):
         self.rat = rat
         self.inf = inf
 
@@ -54,3 +54,14 @@ class InfRational:
 
     def __repr__(self) -> str:
         return self.__str__()
+
+
+def rational_from_json(rational) -> Rational:
+    return Rational(rational['num'], rational['den'])
+
+
+def inf_rational_from_json(inf_rational) -> InfRational:
+    if 'inf' in inf_rational:
+        return InfRational(rational_from_json(inf_rational['rat'], inf_rational['inf']))
+    else:
+        return InfRational(rational_from_json(inf_rational['rat']))
