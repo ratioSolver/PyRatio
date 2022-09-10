@@ -60,6 +60,6 @@ ext_modules = [
 
 setup(
     ext_modules=ext_modules,
-    packages=['oRatio'],
-    package_dir={'oRatio': 'src/oRatio'}
+    packages=['oRatio', 'oRatio.timelines'],
+    package_dir={'oRatio': 'src/oRatio', 'oRatio.timelines': 'src/oRatio/timelines'}
 )

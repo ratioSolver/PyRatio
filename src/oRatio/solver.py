@@ -72,8 +72,6 @@ class Solver:
             l.read(riddle)
 
     def fire_state_changed(self) -> None:
-        if self.build_timelines_at_state_change:
-            self.timelines.state_changed()
         for l in self.core_listeners:
             l.state_changed()
 
@@ -82,8 +80,6 @@ class Solver:
             l.started_solving()
 
     def fire_solution_found(self) -> None:
-        if self.build_timelines_at_solution_found:
-            self.timelines.state_changed()
         for l in self.core_listeners:
             l.solution_found()
 
