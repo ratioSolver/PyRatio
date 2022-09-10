@@ -1,11 +1,14 @@
 from oRatioSolverNative import new_instance, delete_instance, read_script, read_files, solve_problem
 from typing import Sequence
-from oRatio.timeline import TimelinesList
+import oRatio
+from oRatio.timeline import Timeline, TimelineExtractor
 from oRatio.type import *
 from oRatio.item import *
 from oRatio.core_listener import CoreListener
 from oRatio.solver_listener import SolverListener, Rational, Bound
+from oRatio.timelines.agent import AgentExtractor
 from oRatio.timelines.state_variable import StateVariableExtractor
+from oRatio.timelines.reusable_resource import ReusableResourceExtractor
 
 
 class Solver:
@@ -21,10 +24,16 @@ class Solver:
         self.atoms: dict[str, Atom] = {}
         self.core_listeners: list[CoreListener] = []
         self.solver_listeners: list[SolverListener] = []
-        self.timelines: TimelinesList = TimelinesList(self)
+
         new_instance(self)
-        self.timelines.add_timelines_extractor(
-            self.types["StateVariable"], StateVariableExtractor())
+
+        self.timelines_extractors: dict[Type, TimelineExtractor] = {}
+        self.timelines_extractors[self.types["Agent"]
+                                  ] = AgentExtractor()
+        self.timelines_extractors[self.types["StateVariable"]
+                                  ] = StateVariableExtractor()
+        self.timelines_extractors[self.types["ReusableResource"]
+                                  ] = ReusableResourceExtractor()
 
     def dispose(self):
         delete_instance(self)
@@ -37,6 +46,29 @@ class Solver:
 
     def solve(self) -> bool:
         return solve_problem(self)
+
+    def extract_timelines(self) -> list[Timeline]:
+        timelines: list[Timeline] = []
+        tls_atms: dict[Item, list[Atom]] = {}
+
+        for atm in self.atoms.values():
+            tau = atm.exprs.get('tau')
+            if isinstance(tau, EnumItem):
+                for itm in tau.vals:
+                    if itm not in tls_atms:
+                        tls_atms[itm] = []
+                    tls_atms[itm].append(atm)
+            elif tau:
+                if tau not in tls_atms:
+                    tls_atms[tau] = []
+                tls_atms[tau].append(atm)
+
+        for itm, atms in tls_atms.items():
+            extractor = self.timelines_extractors[itm.type]
+            if extractor:
+                timelines.append(extractor.extract(itm, atms))
+
+        return timelines
 
     def fire_log(self, msg: str) -> None:
         for l in self.core_listeners:

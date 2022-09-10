@@ -27,34 +27,3 @@ class TimelineExtractor:
 
     def extract(self, itm: Item, atoms: set[Atom]) -> Timeline:
         pass
-
-
-class TimelinesList(list[Timeline]):
-
-    def __init__(self, solver):
-        self.solver = solver
-        self.timelines_extractors: dict[Type, TimelineExtractor] = {}
-
-    def add_timelines_extractor(self, type: Type, timelines_extractor: TimelineExtractor) -> None:
-        self.timelines_extractors[type] = timelines_extractor
-
-    def state_changed(self):
-        self.clear()
-        atoms: dict[Item, list[Atom]] = {}
-
-        for atm in self.solver.atoms.values():
-            tau = atm.exprs.get('tau')
-            if isinstance(tau, EnumItem):
-                for itm in tau.vals:
-                    if itm not in atoms:
-                        atoms[itm] = []
-                    atoms[itm].append(atm)
-            elif tau:
-                if tau not in atoms:
-                    atoms[tau] = []
-                atoms[tau].append(atm)
-
-        for itm, atms in atoms.items():
-            extractor = self.timelines_extractors[itm.type]
-            if extractor:
-                self.append(extractor.extract(itm, atms))

@@ -1,24 +1,26 @@
 from oRatio.item import Atom
 from oRatio.timeline import *
+from fractions import Fraction
 
 
-class SVValue(Value):
+class RRValue(Value):
 
-    def __init__(self, _from: InfRational, _to: InfRational, atoms: set[Atom]):
-        super(SVValue, self).__init__(_from, _to)
+    def __init__(self, _from: InfRational, _to: InfRational, amount: InfRational, atoms: set[Atom]):
+        super(RRValue, self).__init__(_from, _to)
+        self.amount = amount
         self.atoms = atoms
 
 
-class StateVariable(Timeline[SVValue]):
+class ReusableResource(Timeline[RRValue]):
 
     def __init__(self, name: str, origin: InfRational, horizon: InfRational):
-        super(StateVariable, self).__init__(name, origin, horizon)
+        super(ReusableResource, self).__init__(name, origin, horizon)
 
 
-class StateVariableExtractor(TimelineExtractor):
+class ReusableResourceExtractor(TimelineExtractor):
 
-    def extract(self, itm: Item, atoms: set[Atom]) -> StateVariable:
-        sv = StateVariable(
+    def extract(self, itm: Item, atoms: set[Atom]) -> ReusableResource:
+        sv = ReusableResource(
             itm.name, itm.solver.exprs["origin"].val, itm.solver.exprs["horizon"].val)
         starting_values: dict[InfRational, list[Atom]] = {}
         ending_values: dict[InfRational, list[Atom]] = {}
@@ -39,20 +41,31 @@ class StateVariableExtractor(TimelineExtractor):
         sorted_pulses = sorted(pulses)
         overlapping_atoms: list[Atom] = []
 
+        usage = Fraction()
         if sorted_pulses[0] in starting_values:
-            overlapping_atoms.extend(starting_values[sorted_pulses[0]])
+            for atm in starting_values[sorted_pulses[0]]:
+                overlapping_atoms.add(atm)
+                usage.__add__(
+                    Fraction(atm.exprs['usage'].numerator, atm.exprs['usage'].denominator))
         if sorted_pulses[0] in ending_values:
             for atm in ending_values[sorted_pulses[0]]:
                 overlapping_atoms.remove(atm)
+                usage.__sub__(
+                    Fraction(atm.exprs['usage'].numerator, atm.exprs['usage'].denominator))
 
         i = 1
         while i < len(sorted_pulses):
             sv.values.append(
-                SVValue(sorted_pulses[i-1], sorted_pulses[i], overlapping_atoms.copy()))
+                RRValue(sorted_pulses[i-1], sorted_pulses[i], usage, overlapping_atoms.copy()))
             if sorted_pulses[i] in starting_values:
-                overlapping_atoms.extend(starting_values[sorted_pulses[i]])
+                for atm in starting_values[sorted_pulses[i]]:
+                    overlapping_atoms.add(atm)
+                    usage.__add__(
+                        Fraction(atm.exprs['usage'].numerator, atm.exprs['usage'].denominator))
             if sorted_pulses[i] in ending_values:
                 for atm in ending_values[sorted_pulses[i]]:
                     overlapping_atoms.remove(atm)
+                    usage.__sub__(
+                        Fraction(atm.exprs['usage'].numerator, atm.exprs['usage'].denominator))
 
         return sv
