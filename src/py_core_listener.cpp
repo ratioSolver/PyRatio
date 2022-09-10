@@ -213,6 +213,7 @@ namespace ratio::python
         all_items.emplace(&atm, c_atm);
 
         c_pred.attr("add_instance")(c_atm);
+        py_slv.attr("atoms")[std::to_string(get_id(atm)).c_str()] = c_atm;
     }
 
     void py_core_listener::set(pybind11::object &c_obj, const std::string &name, const ratio::core::item &itm)

@@ -14,6 +14,7 @@ class Solver:
         self.types: dict[str, Type] = {}
         self.predicates: dict[str, Predicate] = {}
         self.exprs: dict[str, Item] = {}
+        self.atoms: dict[str, Atom] = {}
         self.core_listeners: list[CoreListener] = []
         self.solver_listeners: list[SolverListener] = []
         new_instance(self)
