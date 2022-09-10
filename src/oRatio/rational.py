@@ -19,6 +19,12 @@ class Rational:
     def is_negative_infinite(self) -> bool:
         return self.is_negative() and self.is_infinite()
 
+    def __lt__(self, other):
+        if self.denominator == other.denominator:
+            return self.numerator < other.numerator
+        else:
+            return self.numerator * other.denominator < self.denominator * other.numerator
+
     def __str__(self) -> str:
         if self.denominator == 0:
             return '+inf' if self.numerator > 0 else '-inf'
@@ -36,6 +42,9 @@ class InfRational:
     def __init__(self, rat: int, inf: int):
         self.rat = rat
         self.inf = inf
+
+    def __lt__(self, other):
+        return self.rat < other.rat or (self.rat == other.rat and self.inf < other.inf)
 
     def __str__(self) -> str:
         if self.inf.numerator == 0:

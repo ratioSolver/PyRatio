@@ -1,14 +1,18 @@
 from oRatioSolverNative import new_instance, delete_instance, read_script, read_files, solve_problem
 from typing import Sequence
+from oRatio.timeline import TimelinesList
 from oRatio.type import *
 from oRatio.item import *
 from oRatio.core_listener import CoreListener
 from oRatio.solver_listener import SolverListener, Rational, Bound
+from oRatio.timelines.state_variable import StateVariableExtractor
 
 
 class Solver:
 
-    def __init__(self):
+    def __init__(self, build_timelines_at_state_change: bool = False, build_timelines_at_solution_found: bool = True):
+        self.build_timelines_at_state_change = build_timelines_at_state_change
+        self.build_timelines_at_solution_found = build_timelines_at_solution_found
         self.fields: dict[str, Field] = {}
         self.methods: dict[str, list[Method]] = {}
         self.types: dict[str, Type] = {}
@@ -17,7 +21,10 @@ class Solver:
         self.atoms: dict[str, Atom] = {}
         self.core_listeners: list[CoreListener] = []
         self.solver_listeners: list[SolverListener] = []
+        self.timelines: TimelinesList = TimelinesList(self)
         new_instance(self)
+        self.timelines.add_timelines_extractor(
+            self.types["StateVariable"], StateVariableExtractor())
 
     def dispose(self):
         delete_instance(self)
@@ -40,6 +47,8 @@ class Solver:
             l.read(riddle)
 
     def fire_state_changed(self) -> None:
+        if self.build_timelines_at_state_change:
+            self.timelines.state_changed()
         for l in self.core_listeners:
             l.state_changed()
 
@@ -48,6 +57,8 @@ class Solver:
             l.started_solving()
 
     def fire_solution_found(self) -> None:
+        if self.build_timelines_at_solution_found:
+            self.timelines.state_changed()
         for l in self.core_listeners:
             l.solution_found()
 
