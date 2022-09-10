@@ -69,7 +69,7 @@ pybind11::bool_ solve_problem(pybind11::object &py_slv)
     }
 }
 
-PYBIND11_MODULE(oRatioNative, m)
+PYBIND11_MODULE(oRatioSolverNative, m)
 {
     m.doc() = "Python API for the oRatio solver";
 

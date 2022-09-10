@@ -1,4 +1,4 @@
-from oRatioNative import new_instance, delete_instance, read_script, read_files, solve_problem
+from oRatioSolverNative import new_instance, delete_instance, read_script, read_files, solve_problem
 from typing import Sequence
 from oRatio.type import *
 from oRatio.item import *
