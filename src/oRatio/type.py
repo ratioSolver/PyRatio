@@ -14,6 +14,7 @@ class Type:
         self.fields: dict[str, Field] = {}
         self.methods: dict[str, Sequence[Method]] = {}
         self.types: dict[str, Type] = {}
+        self.predicates: dict[str, Predicate] = {}
         self.instances: set = []
 
     def add_instance(self, itm):
