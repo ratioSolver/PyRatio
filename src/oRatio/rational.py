@@ -66,10 +66,10 @@ class InfRational(Rational):
         return False
 
     def __str__(self) -> str:
-        if self.inf.numerator == 0:
-            return str(self.rat)
+        if 'inf' not in self.__dict__ or self.inf.numerator == 0:
+            return super(InfRational, self).__str__()
         else:
-            return str(self.rat) + ' + ε' + str(self.inf)
+            return super(InfRational, self).__str__() + ' + ε' + str(self.inf)
 
     def __repr__(self) -> str:
         return self.__str__()
