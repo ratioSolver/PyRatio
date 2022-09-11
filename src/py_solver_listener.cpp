@@ -15,7 +15,7 @@ namespace ratio::python
         // the flaw's position..
         const auto [lb, ub] = slv.get_idl_theory().bounds(f.get_position());
 
-        py_slv.attr("fire_flaw_created")(get_id(f), causes, f.get_data().dump(), slv.get_sat_core()->value(f.get_phi()), lb, ub);
+        py_slv.attr("fire_flaw_created")(get_id(f), causes, f.get_data().dump(), slv.get_sat_core()->value(f.get_phi()), pybind11::module_::import("oRatio.solver_listener").attr("Bound")(lb, ub));
     }
     void py_solver_listener::flaw_state_changed(const ratio::solver::flaw &f) { py_slv.attr("fire_flaw_state_changed")(get_id(f), slv.get_sat_core()->value(f.get_phi())); }
     void py_solver_listener::flaw_cost_changed(const ratio::solver::flaw &f)
@@ -30,7 +30,7 @@ namespace ratio::python
         // the flaw's position..
         const auto [lb, ub] = slv.get_idl_theory().bounds(f.get_position());
 
-        py_slv.attr("fire_flaw_position_changed")(get_id(f), lb, ub);
+        py_slv.attr("fire_flaw_position_changed")(get_id(f), pybind11::module_::import("oRatio.solver_listener").attr("Bound")(lb, ub));
     }
     void py_solver_listener::current_flaw(const ratio::solver::flaw &f) { py_slv.attr("fire_current_flaw")(get_id(f)); }
 
