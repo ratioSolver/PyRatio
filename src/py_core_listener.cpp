@@ -211,7 +211,7 @@ namespace ratio::python
     void py_core_listener::new_atom(const ratio::core::atom &atm)
     {
         auto &c_pred = all_types.at(&atm.get_type());
-        auto c_atm = pybind11::module_::import("oRatio.item").attr("Item")(py_slv, c_pred, get_id(atm));
+        auto c_atm = pybind11::module_::import("oRatio.item").attr("Atom")(py_slv, c_pred, get_id(atm));
         all_items.emplace(&atm, c_atm);
 
         c_pred.attr("add_instance")(c_atm);
