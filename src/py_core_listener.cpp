@@ -6,6 +6,7 @@
 #include "item.h"
 #include "solver.h"
 #include <queue>
+#include <pybind11/stl.h>
 
 namespace ratio::python
 {
