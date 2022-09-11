@@ -9,3 +9,9 @@ class Constructor:
         self.fields: dict[str, Field] = {}
         for par in parameters:
             self.fields[par.name] = par
+
+    def __str__(self) -> str:
+        return '(' + ', '.join(str(f) for f in self.fields.values()) + ')'
+
+    def __repr__(self) -> str:
+        return self.__str__()

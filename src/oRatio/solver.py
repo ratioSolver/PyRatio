@@ -14,9 +14,7 @@ from oRatio.timelines.consumbale_resource import ConsumableResourceExtractor
 
 class Solver:
 
-    def __init__(self, build_timelines_at_state_change: bool = False, build_timelines_at_solution_found: bool = True):
-        self.build_timelines_at_state_change = build_timelines_at_state_change
-        self.build_timelines_at_solution_found = build_timelines_at_solution_found
+    def __init__(self):
         self.fields: dict[str, Field] = {}
         self.methods: dict[str, list[Method]] = {}
         self.types: dict[str, Type] = {}
@@ -56,9 +54,8 @@ class Solver:
 
         timelines: list[Timeline] = []
         for j_tl in j_tls:
-            extractor = self.timelines_extractors[j_tl['type']]
-            if extractor:
-                timelines.append(extractor.extract(
+            if j_tl['type'] in self.types and self.types[j_tl['type']] in self.timelines_extractors:
+                timelines.append(self.timelines_extractors[self.types[j_tl['type']]].extract(
                     self.items[j_tl['id']], j_tl))
 
         return timelines

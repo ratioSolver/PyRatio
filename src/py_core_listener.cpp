@@ -143,7 +143,7 @@ namespace ratio::python
         auto &tp = all_types.at(&t);
         // we add the type fields..
         for (const auto &[f_name, f] : t.get_fields())
-            tp.attr("fields")[f_name.c_str()] = pybind11::module_::import("oRatio.field").attr("Field")(f_name, all_types.at(&f->get_type()));
+            tp.attr("fields")[f_name.c_str()] = pybind11::module_::import("oRatio.field").attr("Field")(all_types.at(&f->get_type()), f_name);
 
         // we add the supertypes..
         pybind11::list l = tp.attr("supertypes");
@@ -151,12 +151,12 @@ namespace ratio::python
             l.append(all_types.at(st));
 
         // we add the constructors..
-        pybind11::list ctrs = tp.attr("supertypes");
+        pybind11::list ctrs = tp.attr("constructors");
         for (const auto &ctr : t.get_constructors())
         {
             pybind11::list pars;
             for (const auto &arg : ctr->get_args())
-                pars.append(pybind11::module_::import("oRatio.field").attr("Field")(arg->get_name(), all_types.at(&arg->get_type())));
+                pars.append(pybind11::module_::import("oRatio.field").attr("Field")(all_types.at(&arg->get_type()), arg->get_name()));
             ctrs.append(pybind11::module_::import("oRatio.constructor").attr("Constructor")(pars));
         }
 
@@ -169,7 +169,7 @@ namespace ratio::python
             {
                 pybind11::list pars;
                 for (const auto &arg : mthd->get_args())
-                    pars.append(pybind11::module_::import("oRatio.field").attr("Field")(arg->get_name(), all_types.at(&arg->get_type())));
+                    pars.append(pybind11::module_::import("oRatio.field").attr("Field")(all_types.at(&arg->get_type()), arg->get_name()));
                 n_mthds.append(pybind11::module_::import("oRatio.method").attr("Method")(mthd_name, pars, mthd->get_return_type() ? all_types.at(mthd->get_return_type()) : pybind11::none()));
             }
             mthds[mthd_name.c_str()] = n_mthds;
@@ -180,7 +180,7 @@ namespace ratio::python
     {
         auto pred = pybind11::module_::import("oRatio.type").attr("Predicate")(p.get_name());
         for (const auto &arg : p.get_args())
-            pred.attr("fields")[arg->get_name().c_str()] = pybind11::module_::import("oRatio.field").attr("Field")(arg->get_name(), all_types.at(&arg->get_type()));
+            pred.attr("fields")[arg->get_name().c_str()] = pybind11::module_::import("oRatio.field").attr("Field")(all_types.at(&arg->get_type()), arg->get_name());
         all_types.emplace(&p, pred);
 
         auto &c_scp = p.get_scope();
@@ -286,5 +286,8 @@ namespace ratio::python
         }
         else // the expression represents an item..
             c_obj.attr("exprs")[name.c_str()] = i_it->second;
+
+        if (c_obj.is(py_slv)) // since the object is the solver, we also add a field..
+            c_obj.attr("fields")[name.c_str()] = pybind11::module_::import("oRatio.field").attr("Field")(all_types.at(&itm.get_type()), name);
     }
 } // namespace ratio::python
