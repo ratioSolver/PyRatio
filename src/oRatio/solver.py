@@ -56,7 +56,7 @@ class Solver:
         for j_tl in j_tls:
             if j_tl['type'] in self.types and self.types[j_tl['type']] in self.timelines_extractors:
                 timelines.append(self.timelines_extractors[self.types[j_tl['type']]].extract(
-                    self.items[j_tl['id']], j_tl))
+                    self.items[str(j_tl['id'])], j_tl))
 
         return timelines
 

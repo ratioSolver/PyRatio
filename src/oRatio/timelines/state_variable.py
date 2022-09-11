@@ -8,6 +8,16 @@ class SVValue(Value):
         super(SVValue, self).__init__(_from, _to)
         self.atoms = atoms
 
+    def __str__(self) -> str:
+        if len(self.atoms) == 0:
+            return super(SVValue, self).__str__() + 'none'
+        elif len(self.atoms) == 1:
+            atm = next(iter(self.atoms))
+            return super(SVValue, self).__str__() + atm.type.name
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
 
 class StateVariable(Timeline[SVValue]):
 
