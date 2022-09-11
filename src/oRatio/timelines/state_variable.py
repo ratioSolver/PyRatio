@@ -10,10 +10,10 @@ class SVValue(Value):
 
     def __str__(self) -> str:
         if len(self.atoms) == 0:
-            return super(SVValue, self).__str__() + 'none'
+            return super(SVValue, self).__str__() + ' none'
         elif len(self.atoms) == 1:
             atm = next(iter(self.atoms))
-            return super(SVValue, self).__str__() + atm.type.name
+            return super(SVValue, self).__str__() + ' ' + atm.type.name
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -33,9 +33,11 @@ class StateVariableExtractor(TimelineExtractor):
 
         for val in json_tl['values']:
             atoms: list[Atom] = []
-            for atm_id in val.atoms:
+            for atm_id in val['atoms']:
                 atoms.append(itm.solver.atoms[str(atm_id)])
             sv.values.append(
-                SVValue(inf_rational_from_json(val['from']), inf_rational_from_json(val['to']), inf_rational_from_json(val['usage']), atoms))
+                SVValue(rational_from_json(val['from']),
+                        rational_from_json(val['to']),
+                        atoms))
 
         return sv

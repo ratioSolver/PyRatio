@@ -30,12 +30,12 @@ class ConsumableResourceExtractor(TimelineExtractor):
 
         for val in json_tl['values']:
             atoms: list[Atom] = []
-            for atm_id in val.atoms:
+            for atm_id in val['atoms']:
                 atoms.append(itm.solver.atoms[str(atm_id)])
-            sv.values.append(CRValue(inf_rational_from_json(val['from']),
-                                     inf_rational_from_json(val['to']),
-                                     inf_rational_from_json(val['start']),
-                                     inf_rational_from_json(val['end']),
+            sv.values.append(CRValue(rational_from_json(val['from']),
+                                     rational_from_json(val['to']),
+                                     rational_from_json(val['start']),
+                                     rational_from_json(val['end']),
                                      atoms))
 
         return sv

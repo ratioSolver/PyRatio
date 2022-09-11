@@ -10,7 +10,7 @@ class Value:
         self._to = _to
 
     def __str__(self) -> str:
-        if self._from.rat < self._to.rat or self._from.inf < self._to.inf:
+        if self._from < self._to:
             return '[' + str(self._from) + ', ' + str(self._to) + ']'
         else:
             return str(self._from)

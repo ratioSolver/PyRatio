@@ -19,11 +19,25 @@ class Rational:
     def is_negative_infinite(self) -> bool:
         return self.is_negative() and self.is_infinite()
 
+    def __eq__(self, other):
+        if isinstance(other, Rational):
+            return self.numerator == other.numerator and self.denominator == other.denominator
+        elif isinstance(other, InfRational):
+            return self.numerator == other.numerator and self.denominator == other.denominator and other.inf.numerator == 0
+        return False
+
     def __lt__(self, other):
-        if self.denominator == other.denominator:
-            return self.numerator < other.numerator
-        else:
-            return self.numerator * other.denominator < self.denominator * other.numerator
+        if isinstance(other, Rational):
+            if self.denominator == other.denominator:
+                return self.numerator < other.numerator
+            else:
+                return self.numerator * other.denominator < self.denominator * other.numerator
+        elif isinstance(other, InfRational):
+            if self.denominator == other.denominator:
+                return self.numerator < other.numerator or (self.numerator == other.numerator and other.inf.numerator < 0)
+            else:
+                return self.numerator * other.denominator < self.denominator * other.numerator or (self.numerator * other.denominator or self.denominator * other.numerator and other.inf.numerator < 0)
+        return False
 
     def __str__(self) -> str:
         if self.denominator == 0:
@@ -37,14 +51,19 @@ class Rational:
         return self.__str__()
 
 
-class InfRational:
+class InfRational(Rational):
 
     def __init__(self, rat: Rational, inf: Rational = Rational(0)):
-        self.rat = rat
-        self.inf = inf
+        super(InfRational, self).__init__(rat.numerator, rat.denominator)
+        if inf.numerator != 0:
+            self.inf = inf
 
     def __lt__(self, other):
-        return self.rat < other.rat or (self.rat == other.rat and self.inf < other.inf)
+        if isinstance(other, Rational):
+            return super(InfRational, self).__lt__(other) or (super(InfRational, self).__eq__(other) and self.inf.numerator < 0)
+        elif isinstance(other, InfRational):
+            return super(InfRational, self).__lt__(other) or (super(InfRational, self).__eq__(other) and self.inf < other.inf)
+        return False
 
     def __str__(self) -> str:
         if self.inf.numerator == 0:
@@ -57,11 +76,7 @@ class InfRational:
 
 
 def rational_from_json(rational) -> Rational:
-    return Rational(rational['num'], rational['den'])
-
-
-def inf_rational_from_json(inf_rational) -> InfRational:
-    if 'inf' in inf_rational:
-        return InfRational(rational_from_json(inf_rational['rat'], inf_rational['inf']))
+    if 'inf' in rational:
+        return InfRational(rational_from_json(rational['rat'], rational['inf']))
     else:
-        return InfRational(rational_from_json(inf_rational['rat']))
+        return Rational(rational['num'], rational['den'])
