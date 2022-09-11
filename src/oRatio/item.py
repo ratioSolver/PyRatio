@@ -84,7 +84,7 @@ class ComplexItem(Item):
     def __init__(self, env, type: Type, id: int):
         self.env = env
         self.type = type
-        self.exprs = dict[str, Item]
+        self.exprs: dict[str, Item] = {}
 
 
 class Atom(ComplexItem):
