@@ -14,6 +14,8 @@ class SVValue(Value):
         elif len(self.atoms) == 1:
             atm = next(iter(self.atoms))
             return super(SVValue, self).__str__() + ' ' + atm.type.name
+        else:
+            return super(SVValue, self).__str__() + ' [' + ', '.join(atm.type.name for atm in self.atoms) + ']'
 
     def __repr__(self) -> str:
         return self.__str__()

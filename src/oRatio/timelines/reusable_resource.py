@@ -9,6 +9,12 @@ class RRValue(Value):
         self.amount = amount
         self.atoms = atoms
 
+    def __str__(self) -> str:
+        return super(RRValue, self).__str__() + ' ' + str(self.amount)
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
 
 class ReusableResource(Timeline[RRValue]):
 

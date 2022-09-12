@@ -8,6 +8,12 @@ class Action(Value):
         super(Action, self).__init__(_from, _to)
         self.atom = atom
 
+    def __str__(self) -> str:
+        return super(Action, self).__str__() + ' ' + self.atom.type.name
+
+    def __repr__(self) -> str:
+        return self.__str__()
+
 
 class Agent(Timeline[Action]):
 

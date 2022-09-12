@@ -200,7 +200,7 @@ namespace ratio::python
     void py_core_listener::new_item(const ratio::core::item &itm)
     {
         auto &c_type = all_types.at(&itm.get_type());
-        auto c_item = pybind11::module_::import("oRatio.item").attr("Item")(py_slv, c_type, get_id(itm));
+        auto c_item = pybind11::module_::import("oRatio.item").attr("ComplexItem")(py_slv, c_type, get_id(itm));
         c_item.attr("name") = cr.guess_name(itm);
         all_items.emplace(&itm, c_item);
 

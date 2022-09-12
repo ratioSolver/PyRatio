@@ -81,14 +81,13 @@ class EnumItem(Item):
 
 class ComplexItem(Item):
 
-    def __init__(self, env, type: Type, id: int):
-        self.env = env
-        self.type = type
+    def __init__(self, solver, type: Type, id: int):
+        super(ComplexItem, self).__init__(solver, type, id)
         self.exprs: dict[str, Item] = {}
 
 
 class Atom(ComplexItem):
 
-    def __init__(self, env, type: Predicate, id: int):
-        super(Atom, self).__init__(env, type, id)
+    def __init__(self, solver, type: Predicate, id: int):
+        super(Atom, self).__init__(solver, type, id)
         self.state: State = State.Undefined
