@@ -11,7 +11,7 @@ class CRValue(Value):
         self.atoms = atoms
 
     def __str__(self) -> str:
-        return super(CRValue, self).__str__() + ' ' + str(self.start) + '->' + + str(self.end)
+        return super(CRValue, self).__str__() + ' ' + str(self.start) + ' -> ' + str(self.end)
 
     def __repr__(self) -> str:
         return self.__str__()
