@@ -35,7 +35,7 @@ s.dispose()
 ```
 
 In order to use the Python API, specifically, just import the `Solver` from the `oRatio` package.
-Create a new instance of the solver. Read a [RiDDLe](https://github.com/ratioSolver/RiDDLe) script or a list of RiDDLe files and call the `solve` method.
+Create a new instance of the solver. Read a [RiDDLe](https://github.com/ratioSolver/RiDDLe/wiki) script or a list of RiDDLe files and call the `solve` method.
 Both the `read` and the `solve` methods return a boolean indicating, respectively, whether a trivial inconsistency has been detected in the problem and whether a solution has been found.
 Once solved, it is possible to extract the generated timelines and to examine the solution.
 Remember, once done with the solver, to call the `dispose` method to release the resources.
