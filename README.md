@@ -106,7 +106,7 @@ s = Solver()
 e = Executor(s)
 e.add_executor_listener(ExecListener(e))
 
-if s.read('sv/sv_0.rddl') and s.solve():
+if s.read(['example.rddl']) and s.solve():
     tls = s.extract_timelines()
 ```
 
