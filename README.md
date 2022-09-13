@@ -35,9 +35,9 @@ s.dispose()
 ```
 
 In order to use the Python API, specifically, just import the `Solver` from the `oRatio` package.
-Create a new instance of the solver. Read a RiDDLe script or a list of files and call the `solve` method.
-Both the `read` and the `solve` methods return a boolean indicating whether a trivial inconsistency has been found in the problem and whether a solution has been found.
-Once solved, it is possible to extract the timelines to visualize the solution.
+Create a new instance of the solver. Read a [RiDDLe](https://github.com/ratioSolver/RiDDLe) script or a list of RiDDLe files and call the `solve` method.
+Both the `read` and the `solve` methods return a boolean indicating, respectively, whether a trivial inconsistency has been detected in the problem and whether a solution has been found.
+Once solved, it is possible to extract the generated timelines and to examine the solution.
 Remember, once done with the solver, to call the `dispose` method to release the resources.
 
 ## Programmatic access to the solution
@@ -74,19 +74,19 @@ class ExecListener(ExecutorListener):
         self.executor = executor
 
     def tick(self, current_time: Rational) -> None:
-        print(current_time)
+        print('current time: ' + str(current_time))
 
     def starting_atoms(self, atoms: Sequence[Atom]) -> None:
-        print(atoms)
+        print('checking starting atoms ' + str(atoms))
 
     def start_atoms(self, atoms: Sequence[Atom]) -> None:
-        print(atoms)
+        print('starting atoms ' + str(atoms))
 
     def ending_atoms(self, atoms: Sequence[Atom]) -> None:
-        print(atoms)
+        print('checking ending atoms ' + str(atoms))
 
     def end_atoms(self, atoms: Sequence[Atom]) -> None:
-        print(atoms)
+        print('ending atoms ' + str(atoms))
 ```
 
 Note that while the `start_atoms` (`end_atoms`) methods are meant to start (stop) the execution of tasks, the `starting_atoms` (`ending_atoms`) methods are meant to ask for the ability to start (end) the tasks.

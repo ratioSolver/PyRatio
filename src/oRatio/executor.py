@@ -59,33 +59,21 @@ class Executor:
         for l in self.executor_listeners:
             l.tick(current_time)
 
-    def fire_starting_atoms(self, atoms: Sequence[int]) -> None:
-        c_atoms: list[Atom] = []
-        for atm_id in atoms:
-            c_atoms.append(self.solver.atoms[str(atm_id)])
+    def fire_starting_atoms(self, atoms: Sequence[Atom]) -> None:
         for l in self.executor_listeners:
-            l.starting_atoms(c_atoms)
+            l.starting_atoms(atoms)
 
-    def fire_start_atoms(self, atoms: Sequence[int]) -> None:
-        c_atoms: list[Atom] = []
-        for atm_id in atoms:
-            c_atoms.append(self.solver.atoms[str(atm_id)])
+    def fire_start_atoms(self, atoms: Sequence[Atom]) -> None:
         for l in self.executor_listeners:
-            l.start_atoms(c_atoms)
+            l.start_atoms(atoms)
 
-    def fire_ending_atoms(self, atoms: Sequence[int]) -> None:
-        c_atoms: list[Atom] = []
-        for atm_id in atoms:
-            c_atoms.append(self.solver.atoms[str(atm_id)])
+    def fire_ending_atoms(self, atoms: Sequence[Atom]) -> None:
         for l in self.executor_listeners:
-            l.ending_atoms(c_atoms)
+            l.ending_atoms(atoms)
 
-    def fire_end_atoms(self, atoms: Sequence[int]) -> None:
-        c_atoms: list[Atom] = []
-        for atm_id in atoms:
-            c_atoms.append(self.solver.atoms[str(atm_id)])
+    def fire_end_atoms(self, atoms: Sequence[Atom]) -> None:
         for l in self.executor_listeners:
-            l.end_atoms(c_atoms)
+            l.end_atoms(atoms)
 
     def add_executor_listener(self, listener: ExecutorListener) -> None:
         self.executor_listeners.append(listener)
