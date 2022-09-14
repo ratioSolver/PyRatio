@@ -29,16 +29,17 @@ from oRatio import Solver
 
 s = Solver()
 if s.read(["example.rddl"]) and s.solve():
+    print('hurray!! we have found a solution..')
     tls = s.extract_timelines()
 
 s.dispose()
 ```
 
 In order to use the Python API, specifically, just import the `Solver` from the `oRatio` package.
-Create a new instance of the solver. Read a [RiDDLe](https://github.com/ratioSolver/RiDDLe/wiki) script or a list of RiDDLe files and call the `solve` method.
-Both the `read` and the `solve` methods return a boolean indicating, respectively, whether a trivial inconsistency has been detected in the problem and whether a solution has been found.
+Create a new instance of the solver. Read a [RiDDLe](https://github.com/ratioSolver/RiDDLe/wiki) script, or a list of RiDDLe files, and call the `solve` method.
+Both the `read` and the `solve` methods return a bool indicating, respectively, whether a trivial inconsistency has been detected in the problem and whether a solution has been found.
 Once solved, it is possible to extract the generated timelines and to examine the solution.
-Remember, once done with the solver, to call the `dispose` method to release the resources.
+Remember, once done with your solver, to call the `dispose` method so as to release resources.
 
 ## Programmatic access to the solution
 
@@ -106,19 +107,29 @@ s = Solver()
 e = Executor(s)
 e.add_executor_listener(ExecListener(e))
 
-if s.read(['example.rddl']) and s.solve():
-    tls = s.extract_timelines()
+if not s.read(['example.rddl']) or not s.solve():
+    print('the problem is unsolvable.. :(')
+    sys.exit(-1)
 ```
 
-The last aspect concerns the passage of time.
-This is handled by invoking the executor's tick method.
-This method can be invoked, for example, every second, by means of a timer.
+Notice that since the executor should detect changes from the solver's state, it must be created *before* reading and solving any problem.
+
+The last aspect concerns the passage of time :alarm_clock:.
+This is handled by invoking the executor's `tick` method.
+This method can be invoked, for example, every second, by means of a scheduler.
 
 ```python
 import time
 
-starttime = time.time()
+start_time = time.time()
 while True:
     e.tick()
-    time.sleep(1.0 - ((time.time() - starttime) % 1.0))
+    time.sleep(1.0 - ((time.time() - start_time) % 1.0))
+```
+
+In order to release the resources, don't forget to call, once done, the executor's and the solver's `dispose` methods, in this specific order.
+
+```python
+e.dispose()
+s.dispose()
 ```
