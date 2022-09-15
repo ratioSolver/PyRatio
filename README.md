@@ -1,6 +1,6 @@
 # PyRatio
 
-Python API for the oRatio solver.
+Python API for the [oRatio](https://github.com/ratioSolver/oRatio) solver.
 
 ## Installation
 
