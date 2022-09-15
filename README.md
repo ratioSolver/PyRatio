@@ -20,7 +20,7 @@ Go back at PyRatio level and compile the wheel using `python -m build`.
 
 Install the wheel using `pip install` with the generated `.whl` files.
 
-## Solving problems
+## Solving RiDDLe problems
 
 The following example shows how to use the Python API for solving a problem instance.
 
