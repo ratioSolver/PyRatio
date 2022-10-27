@@ -25,6 +25,34 @@ void delete_instance(pybind11::object &py_exec)
     delete get_executor(py_exec);
 }
 
+pybind11::bool_ adapt_script(pybind11::object &py_exec, const pybind11::str &riddle)
+{
+    try
+    {
+        get_solver(py_exec)->adapt(riddle.cast<std::string>());
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        return false;
+    }
+}
+pybind11::bool_ adapt_files(pybind11::object &py_exec, const std::vector<pybind11::str> &files)
+{
+    std::vector<std::string> c_files;
+    for (const auto &file : files)
+        c_files.push_back(file.cast<std::string>());
+    try
+    {
+        get_solver(py_exec)->adapt(c_files);
+        return true;
+    }
+    catch (const std::exception &e)
+    {
+        return false;
+    }
+}
+
 void tick(pybind11::object &py_exec) { get_executor(py_exec)->tick(); }
 
 void dont_start_yet(pybind11::object &py_exec, pybind11::list &atoms)
@@ -63,6 +91,8 @@ PYBIND11_MODULE(oRatioExecutorNative, m)
 
     m.def("new_instance", &new_instance, "Creates a new executor instance");
     m.def("delete_instance", &delete_instance, "Deletes an existing executor instance");
+    m.def("adapt_script", &adapt_script, "Adapts the current solution a RiDDLe script");
+    m.def("adapt_files", &adapt_files, "Adapts the current solution to a list of RiDDLe files");
     m.def("exec_tick", &tick, "Executes one tick");
     m.def("dont_start_tasks_yet", &dont_start_yet, "Delays the start of the execution of the given tasks adapting the solution accordingly");
     m.def("dont_end_tasks_yet", &dont_end_yet, "Delays the end of the execution of the given tasks adapting the solution accordingly");

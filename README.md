@@ -88,6 +88,9 @@ class ExecListener(ExecutorListener):
 
     def end_atoms(self, atoms: Sequence[Atom]) -> None:
         print('ending atoms ' + str(atoms))
+
+    def finished(self) -> None:
+        print('nothing more to be executed')
 ```
 
 Note that while the `start_atoms` (`end_atoms`) methods are meant to start (stop) the execution of tasks, the `starting_atoms` (`ending_atoms`) methods are meant to ask for the ability to start (end) the tasks.
