@@ -88,9 +88,6 @@ class ExecListener(ExecutorListener):
 
     def end_atoms(self, atoms: Sequence[Atom]) -> None:
         print('ending atoms ' + str(atoms))
-
-    def finished(self) -> None:
-        print('nothing more to be executed')
 ```
 
 Note that while the `start_atoms` (`end_atoms`) methods are meant to start (stop) the execution of tasks, the `starting_atoms` (`ending_atoms`) methods are meant to ask for the ability to start (end) the tasks.
@@ -117,13 +114,15 @@ if not s.read(['example.rddl']) or not s.solve():
 
 Notice that since the executor should detect changes from the solver's state, it must be created *before* reading and solving any problem.
 
-The last aspect concerns the passage of time :alarm_clock:.
-This is handled by invoking the executor's `tick` method.
-This method can be invoked, for example, every second, by means of a scheduler.
+Any solution adaptation is made within the `tick` method.
+By invoking the `start_execution` method, the `tick` method, after the adaptation, advances also the current time, requesting listeners to start (end) scheduled tasks. The amount of advanced time is defined by an optional parameter (default to one) sent to the `Executor`'s constructor.
+
+The `tick` method can be invoked, for example, every second, by means of a scheduler.
 
 ```python
 import time
 
+e.start_execution()
 start_time = time.time()
 while True:
     e.tick()

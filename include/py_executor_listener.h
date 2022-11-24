@@ -18,8 +18,6 @@ namespace ratio::python
     void ending(const std::unordered_set<ratio::core::atom *> &atoms);
     void end(const std::unordered_set<ratio::core::atom *> &atoms);
 
-    void finished();
-
   private:
     pybind11::object py_exec;
   };

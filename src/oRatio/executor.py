@@ -1,4 +1,4 @@
-from oRatioExecutorNative import new_instance, delete_instance, adapt_script, adapt_files, exec_tick, dont_start_tasks_yet, dont_end_tasks_yet, failed_tasks
+from oRatioExecutorNative import new_instance, delete_instance, is_plan_executing, start_plan_execution, pause_plan_execution, is_plan_finished, adapt_script, adapt_files, exec_tick, dont_start_tasks_yet, dont_end_tasks_yet, failed_tasks
 from typing import Sequence
 from oRatio.item import Atom
 from oRatio.solver import Solver
@@ -14,6 +14,18 @@ class Executor:
 
     def dispose(self):
         delete_instance(self)
+
+    def is_executing(self) -> bool:
+        return is_plan_executing(self)
+
+    def start_execution(self) -> None:
+        start_plan_execution(self)
+
+    def pause_execution(self) -> None:
+        pause_plan_execution(self)
+
+    def is_finished(self) -> bool:
+        return is_plan_finished(self)
 
     def adapt(self, riddle: str | Sequence[str]) -> bool:
         if isinstance(riddle, str):

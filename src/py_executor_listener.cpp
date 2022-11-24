@@ -37,6 +37,4 @@ namespace ratio::python
             atms.add(py_exec.attr("solver").attr("atoms")[std::to_string(get_id(*atm)).c_str()]);
         py_exec.attr("fire_end_atoms")(atms);
     }
-
-    void py_executor_listener::finished() { py_exec.attr("finished")(); }
 } // namespace ratio::python

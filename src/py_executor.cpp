@@ -25,6 +25,13 @@ void delete_instance(pybind11::object &py_exec)
     delete get_executor(py_exec);
 }
 
+pybind11::bool_ is_plan_executing(pybind11::object &py_exec) { return get_executor(py_exec)->is_executing(); }
+
+void start_plan_execution(pybind11::object &py_exec) { get_executor(py_exec)->start_execution(); }
+void pause_plan_execution(pybind11::object &py_exec) { get_executor(py_exec)->pause_execution(); }
+
+pybind11::bool_ is_plan_finished(pybind11::object &py_exec) { return get_executor(py_exec)->is_finished(); }
+
 pybind11::bool_ adapt_script(pybind11::object &py_exec, const pybind11::str &riddle)
 {
     try
@@ -91,6 +98,10 @@ PYBIND11_MODULE(oRatioExecutorNative, m)
 
     m.def("new_instance", &new_instance, "Creates a new executor instance");
     m.def("delete_instance", &delete_instance, "Deletes an existing executor instance");
+    m.def("is_plan_executing", &is_plan_executing, "Checks whether the current solution is being executed");
+    m.def("start_plan_execution", &start_plan_execution, "Starts the execution of the current solution");
+    m.def("pause_plan_execution", &pause_plan_execution, "Pauses the execution of the current solution");
+    m.def("is_plan_finished", &is_plan_finished, "Checks whether there are task to be executed in the future");
     m.def("adapt_script", &adapt_script, "Adapts the current solution a RiDDLe script");
     m.def("adapt_files", &adapt_files, "Adapts the current solution to a list of RiDDLe files");
     m.def("exec_tick", &tick, "Executes one tick");

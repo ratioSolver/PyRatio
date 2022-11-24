@@ -19,6 +19,3 @@ class ExecutorListener:
 
     def end_atoms(self, atoms: Sequence[Atom]) -> None:
         pass
-
-    def finished(self) -> None:
-        pass
