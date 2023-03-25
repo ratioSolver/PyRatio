@@ -6,14 +6,14 @@
 #define NATIVE_HANDLER "__native_handler"
 #define EXECUTOR_LISTENER_NATIVE_HANDLER "__executor_listener_native_handler"
 
-static ratio::solver::solver *get_solver(const pybind11::object &py_exec) { return reinterpret_cast<ratio::solver::solver *>(py_exec.attr("solver").attr(NATIVE_HANDLER).cast<uintptr_t>()); }
+static ratio::solver *get_solver(const pybind11::object &py_exec) { return reinterpret_cast<ratio::solver *>(py_exec.attr("solver").attr(NATIVE_HANDLER).cast<uintptr_t>()); }
 static ratio::executor::executor *get_executor(const pybind11::object &py_exec) { return reinterpret_cast<ratio::executor::executor *>(py_exec.attr(NATIVE_HANDLER).cast<uintptr_t>()); }
-static ratio::core::atom *get_atom(const pybind11::handle &py_atm) { return reinterpret_cast<ratio::core::atom *>(py_atm.cast<uintptr_t>()); }
+static ratio::atom *get_atom(const pybind11::handle &py_atm) { return reinterpret_cast<ratio::atom *>(py_atm.cast<uintptr_t>()); }
 
 void new_instance(pybind11::object &py_exec, pybind11::object &units_per_tick)
 {
     auto s = get_solver(py_exec);
-    auto *exec = new ratio::executor::executor(*s, semitone::rational(static_cast<semitone::I>(units_per_tick.attr("numerator").cast<semitone::I>()), static_cast<semitone::I>(units_per_tick.attr("denominator").cast<semitone::I>())));
+    auto *exec = new ratio::executor::executor(*s, utils::rational(static_cast<utils::I>(units_per_tick.attr("numerator").cast<utils::I>()), static_cast<utils::I>(units_per_tick.attr("denominator").cast<utils::I>())));
     py_exec.attr(NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(exec);
 
     auto *el = new ratio::python::py_executor_listener(*exec, py_exec);
@@ -36,7 +36,7 @@ pybind11::bool_ adapt_script(pybind11::object &py_exec, const pybind11::str &rid
 {
     try
     {
-        get_solver(py_exec)->adapt(riddle.cast<std::string>());
+        get_executor(py_exec)->adapt(riddle.cast<std::string>());
         return true;
     }
     catch (const std::exception &e)
@@ -51,7 +51,7 @@ pybind11::bool_ adapt_files(pybind11::object &py_exec, const std::vector<pybind1
         c_files.push_back(file.cast<std::string>());
     try
     {
-        get_solver(py_exec)->adapt(c_files);
+        get_executor(py_exec)->adapt(c_files);
         return true;
     }
     catch (const std::exception &e)
@@ -64,29 +64,29 @@ void tick(pybind11::object &py_exec) { get_executor(py_exec)->tick(); }
 
 void dont_start_yet(pybind11::object &py_exec, pybind11::list &atoms)
 {
-    std::unordered_map<const ratio::core::atom *, semitone::rational> c_atoms;
+    std::unordered_map<const ratio::atom *, utils::rational> c_atoms;
     for (const auto &atm : atoms)
     {
         pybind11::tuple atm_delay = atm.cast<pybind11::tuple>();
-        c_atoms.emplace(get_atom(atm_delay[0]), semitone::rational(atm_delay[1].attr("numerator").cast<semitone::I>(), atm_delay[1].attr("denominator").cast<semitone::I>()));
+        c_atoms.emplace(get_atom(atm_delay[0]), utils::rational(atm_delay[1].attr("numerator").cast<utils::I>(), atm_delay[1].attr("denominator").cast<utils::I>()));
     }
     get_executor(py_exec)->dont_start_yet(c_atoms);
 }
 
 void dont_end_yet(pybind11::object &py_exec, pybind11::list &atoms)
 {
-    std::unordered_map<const ratio::core::atom *, semitone::rational> c_atoms;
+    std::unordered_map<const ratio::atom *, utils::rational> c_atoms;
     for (const auto &atm : atoms)
     {
         pybind11::tuple atm_delay = atm.cast<pybind11::tuple>();
-        c_atoms.emplace(get_atom(atm_delay[0]), semitone::rational(atm_delay[1].attr("numerator").cast<semitone::I>(), atm_delay[1].attr("denominator").cast<semitone::I>()));
+        c_atoms.emplace(get_atom(atm_delay[0]), utils::rational(atm_delay[1].attr("numerator").cast<utils::I>(), atm_delay[1].attr("denominator").cast<utils::I>()));
     }
     get_executor(py_exec)->dont_end_yet(c_atoms);
 }
 
 void failure(pybind11::object &py_exec, pybind11::list &atoms)
 {
-    std::unordered_set<const ratio::core::atom *> c_atoms;
+    std::unordered_set<const ratio::atom *> c_atoms;
     for (const auto &atm : atoms)
         c_atoms.emplace(get_atom(atm));
     get_executor(py_exec)->failure(c_atoms);

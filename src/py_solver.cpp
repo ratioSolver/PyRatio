@@ -8,11 +8,11 @@
 #define CORE_LISTENER_NATIVE_HANDLER "__core_listener_native_handler"
 #define SOLVER_LISTENER_NATIVE_HANDLER "__solver_listener_native_handler"
 
-static ratio::solver::solver *get_solver(const pybind11::object &py_slv) { return reinterpret_cast<ratio::solver::solver *>(py_slv.attr(NATIVE_HANDLER).cast<uintptr_t>()); }
+static ratio::solver *get_solver(const pybind11::object &py_slv) { return reinterpret_cast<ratio::solver *>(py_slv.attr(NATIVE_HANDLER).cast<uintptr_t>()); }
 
 void new_instance(pybind11::object &py_slv)
 {
-    auto s = new ratio::solver::solver(false);
+    auto s = new ratio::solver(false);
     py_slv.attr(NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(s);
 
     auto cl = new ratio::python::py_core_listener(*s, py_slv);
@@ -68,7 +68,7 @@ pybind11::bool_ solve_problem(pybind11::object &py_slv)
         return false;
     }
 }
-pybind11::str extract_timelines(pybind11::object &py_slv) { return to_timelines(*get_solver(py_slv)).dump(); }
+pybind11::str extract_timelines(pybind11::object &py_slv) { return to_timelines(*get_solver(py_slv)).to_string(); }
 
 PYBIND11_MODULE(oRatioSolverNative, m)
 {

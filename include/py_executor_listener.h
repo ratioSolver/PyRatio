@@ -10,13 +10,13 @@ namespace ratio::python
     py_executor_listener(ratio::executor::executor &exec, pybind11::object &py_exec);
     ~py_executor_listener();
 
-    void tick(const semitone::rational &time);
+    void tick(const utils::rational &time);
 
-    void starting(const std::unordered_set<ratio::core::atom *> &atoms);
-    void start(const std::unordered_set<ratio::core::atom *> &atoms);
+    void starting(const std::unordered_set<ratio::atom *> &atoms);
+    void start(const std::unordered_set<ratio::atom *> &atoms);
 
-    void ending(const std::unordered_set<ratio::core::atom *> &atoms);
-    void end(const std::unordered_set<ratio::core::atom *> &atoms);
+    void ending(const std::unordered_set<ratio::atom *> &atoms);
+    void end(const std::unordered_set<ratio::atom *> &atoms);
 
   private:
     pybind11::object py_exec;
