@@ -16,7 +16,7 @@ cmake -DCOMPUTE_NAMES=ON ..
 sudo make install
 ```
 
-Go back at PyRatio level and compile the wheel using `python -m build`.
+Go back at PyRatio level and compile the wheel using `python -m build`. Note that the `build` module is required and can be installed through `pip install build`.
 
 Install the wheel using `pip install` with the generated `.whl` files.
 
