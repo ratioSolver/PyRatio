@@ -10,10 +10,10 @@ static ratio::solver *get_solver(const pybind11::object &py_exec) { return reint
 static ratio::executor::executor *get_executor(const pybind11::object &py_exec) { return reinterpret_cast<ratio::executor::executor *>(py_exec.attr(NATIVE_HANDLER).cast<uintptr_t>()); }
 static ratio::atom *get_atom(const pybind11::handle &py_atm) { return reinterpret_cast<ratio::atom *>(py_atm.cast<uintptr_t>()); }
 
-void new_instance(pybind11::object &py_exec, pybind11::object &units_per_tick)
+void new_instance(pybind11::object &py_exec, const pybind11::str &name, pybind11::object &units_per_tick)
 {
     auto s = get_solver(py_exec);
-    auto *exec = new ratio::executor::executor(*s, utils::rational(static_cast<utils::I>(units_per_tick.attr("numerator").cast<utils::I>()), static_cast<utils::I>(units_per_tick.attr("denominator").cast<utils::I>())));
+    auto *exec = new ratio::executor::executor(*s, name.cast<std::string>(), utils::rational(static_cast<utils::I>(units_per_tick.attr("numerator").cast<utils::I>()), static_cast<utils::I>(units_per_tick.attr("denominator").cast<utils::I>())));
     py_exec.attr(NATIVE_HANDLER) = reinterpret_cast<uintptr_t>(exec);
 
     auto *el = new ratio::python::py_executor_listener(*exec, py_exec);
@@ -25,12 +25,8 @@ void delete_instance(pybind11::object &py_exec)
     delete get_executor(py_exec);
 }
 
-pybind11::bool_ is_plan_executing(pybind11::object &py_exec) { return get_executor(py_exec)->is_executing(); }
-
 void start_plan_execution(pybind11::object &py_exec) { get_executor(py_exec)->start_execution(); }
 void pause_plan_execution(pybind11::object &py_exec) { get_executor(py_exec)->pause_execution(); }
-
-pybind11::bool_ is_plan_finished(pybind11::object &py_exec) { return get_executor(py_exec)->is_finished(); }
 
 pybind11::bool_ adapt_script(pybind11::object &py_exec, const pybind11::str &riddle)
 {
@@ -98,10 +94,8 @@ PYBIND11_MODULE(oRatioExecutorNative, m)
 
     m.def("new_instance", &new_instance, "Creates a new executor instance");
     m.def("delete_instance", &delete_instance, "Deletes an existing executor instance");
-    m.def("is_plan_executing", &is_plan_executing, "Checks whether the current solution is being executed");
     m.def("start_plan_execution", &start_plan_execution, "Starts the execution of the current solution");
     m.def("pause_plan_execution", &pause_plan_execution, "Pauses the execution of the current solution");
-    m.def("is_plan_finished", &is_plan_finished, "Checks whether there are task to be executed in the future");
     m.def("adapt_script", &adapt_script, "Adapts the current solution a RiDDLe script");
     m.def("adapt_files", &adapt_files, "Adapts the current solution to a list of RiDDLe files");
     m.def("exec_tick", &tick, "Executes one tick");

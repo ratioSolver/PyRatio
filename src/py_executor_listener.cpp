@@ -6,6 +6,8 @@ namespace ratio::python
     py_executor_listener::py_executor_listener(ratio::executor::executor &exec, pybind11::object &py_exec) : executor_listener(exec), py_exec(py_exec) {}
     py_executor_listener::~py_executor_listener() {}
 
+    void py_executor_listener::executor_state_changed(ratio::executor::executor_state state) { py_exec.attr("fire_executor_state_changed")(state); }
+
     void py_executor_listener::tick(const utils::rational &time) { py_exec.attr("fire_tick")(pybind11::module_::import("oRatio.rational").attr("Rational")(time.numerator(), time.denominator())); }
 
     void py_executor_listener::starting(const std::unordered_set<ratio::atom *> &atoms)

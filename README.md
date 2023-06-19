@@ -67,12 +67,15 @@ Similar to a callback, the listener allows to receive information from the execu
 The following listener simply prints the starting/ending tasks on the console.
 
 ```python
-from oRatio import Executor, ExecutorListener
+from oRatio import Executor, ExecutorListener, ExecutorState, Atom
 
 class ExecListener(ExecutorListener):
 
     def __init__(self, executor: Executor):
         self.executor = executor
+
+    def executor_state_changed(self, state: ExecutorState) -> None:
+        print('executor state changed: ' + str(state))
 
     def tick(self, current_time: Rational) -> None:
         print('current time: ' + str(current_time))
